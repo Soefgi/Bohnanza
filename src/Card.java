@@ -1,15 +1,23 @@
+import java.util.ArrayList;
+
 public class Card {
+    final static int OPEN = 1;
+    final static int DOWN = 0;
 
-    final String beanType;
-    final int numberOfCards; // number of instances of this card in the game
-    final int tier1;
-    final int tier2;
-    final int tier3;
-    final int tier4;
+    private final String beanType;
+    private final int numberOfCards; // number of instances of this card in the game
+    private final int tier1;
+    private final int tier2;
+    private final int tier3;
+    private final int tier4;
+    private int face;
 
-    boolean faceUp;
+    //Getters and Setters
+    String getBeanType() {
+        return beanType;
+    }
 
-    public Card(String input) {
+    Card(String input) {
         //example input: Blue Bean,20,4,6,8,10
         String[] splits = input.split(",");
 
@@ -23,8 +31,47 @@ public class Card {
         this.tier3 = Integer.parseInt(splits[4]);
         this.tier4 = Integer.parseInt(splits[5]);
 
-        // cards facing down by default
-        this.faceUp = false;
+        // cards facing downwards by default
+        setFace(DOWN);
+    }
+
+    /**
+     * Set the card's facing direction
+     *
+     * @param face DOWN or OPEN
+     */
+    void setFace(int face) {
+        if (face != OPEN && face != DOWN) {
+            throw new IllegalArgumentException("Invalid field number, only OPEN and DOWN are allowed!");
+        }
+        this.face = face;
+    }
+
+    /**
+     * Calculates how many coins are rewarded by harvesting the given amount
+     *
+     * @param amount The amount of cards to retrieve their coin value
+     * @return The coin value of the given amount
+     */
+    int calculateCoins(int amount) {
+        int coins = 0;
+        if (amount > tier1) coins = 1;
+        if (amount > tier2) coins = 2;
+        if (amount > tier3) coins = 3;
+        if (amount > tier4) coins = 4;
+        return coins;
+    }
+
+    @Override
+    public String toString() {
+        if (face == DOWN) {
+            return "Hidden";
+        }
+        if (face == OPEN) {
+            return beanType;
+        } else {
+            return "Sideways???";
+        }
     }
 
 }

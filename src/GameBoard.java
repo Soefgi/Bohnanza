@@ -1,45 +1,63 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 public class GameBoard {
+    private static final int MAX_DECK_NUMBER = 3;
 
-    final Queue<Player> queue = new LinkedList<>();
-    final Stack<Card> discardPile = new Stack<>();
-    final Stack<Card> stack;
+    private int deckNumber = 0; // how often the deck has been fully empty
+    private final Stack<Card> discardPile = new Stack<>();
+    private final Stack<Card> deck = new Stack<>();
 
-    public GameBoard(String... names) {
-        if (names.length >= 5) {
-            System.err.println("To many arguments! Only 5 or less players are allowed.");
-            throw new IllegalArgumentException();
-        }
+    Stack<Card> getDeck() {
+        return deck;
+    }
 
-        //initialize deck
-        Stack<Card> stack = new Stack<>();
-        ArrayList<Card> deck = CardFactory.createDeck();
-        for (Card card : deck) {
-            stack.push(card);
-        }
-        this.stack = stack;
-
-        //add all players to the board
-        for (String name : names) {
-            this.queue.add(new Player(name));
+    GameBoard() {
+        final ArrayList<Card> new_deck = CardFactory.createDeck();
+        for (Card card : new_deck) {
+            deck.push(card);
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("============ BOARD ============\n");
-        sb.append("Players:" + "\n");
-        for (Player player : queue) {
-            sb.append(player).append("\n");
+    boolean checkDeck() {
+        if (!deck.isEmpty()) {
+            return true;
         }
-        // sb.append("\n");
+
+        deckNumber++;
+        if (deckNumber >= MAX_DECK_NUMBER) return false; //TODO: GAME END
+
+        //shuffle discard pile and use as new deck
+        ArrayList<Card> new_deck = new ArrayList<>(discardPile);
+        discardPile.clear();
+        Collections.shuffle(new_deck);
+        for (Card card : new_deck) {
+            card.setFace(Card.DOWN);
+            deck.push(card);
+        }
+        return true;
+    }
+
+    void addToDiscardPile(Card card) {
+        card.setFace(Card.OPEN);
+        discardPile.push(card);
+    }
+
+    public void print() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("============ BOARD ============\n");
+
+        sb.append("Deck size: ").append(deck.size()).append("\n");
+        sb.append("Deck has been emptied ").append(deckNumber).append(" time(s)!\n\n");
+
+        sb.append("Most recent discarded Card:\n");
+        if (!discardPile.isEmpty()) {
+            sb.append(discardPile.peek().toString());
+        } else {
+            sb.append("No Cards discarded yet\n");
+        }
+
         sb.append("===============================");
-        return sb.toString();
+        System.out.println(sb);
     }
 
 }
