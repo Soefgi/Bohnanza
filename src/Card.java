@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class Card {
     final static int OPEN = 1;
     final static int DOWN = 0;
@@ -72,6 +70,14 @@ public class Card {
         } else {
             return "Sideways???";
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Card) {
+            return this.beanType.equals(((Card) o).beanType);
+        }
+        else return false;
     }
 
 }

@@ -4,7 +4,7 @@ public class Player {
     final static int FIELD_0 = 0;
     final static int FIELD_1 = 1;
     private final String name;
-    private final Queue<Card> hand = new LinkedList<>();
+    private final ArrayList<Card> hand = new ArrayList<>();
     private final List<Card> field0 = new ArrayList<>();
     private final List<Card> field1 = new ArrayList<>();
     private final Stack<Card> treasury = new Stack<>();
@@ -15,8 +15,19 @@ public class Player {
         return name;
     }
 
+    TradingArea getTradingArea() {
+        return tradingArea;
+    }
+
     public Player(String name) {
         this.name = name;
+    }
+
+    Card getHandCard(int position) {
+        if (hand.isEmpty()) {
+            return null;
+        }
+        return hand.remove(position);
     }
 
     void drawCard(GameBoard board) {
@@ -24,6 +35,7 @@ public class Player {
             Card card = board.getDeck().pop();
             card.setFace(Card.OPEN);
             hand.add(card);
+            System.out.println("Drew card of type " + card.getBeanType());
         }
     }
 
@@ -39,6 +51,8 @@ public class Player {
         card.setFace(Card.OPEN);
         if (field == FIELD_0) field0.add(card);
         if (field == FIELD_1) field1.add(card);
+
+        System.out.println("Planted " + card.getBeanType() + " into field " + field);
     }
 
     void harvestField(int field) {
