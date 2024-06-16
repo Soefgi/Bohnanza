@@ -1,4 +1,9 @@
-import java.util.*;
+package io.bitbucket.plt.sdp.bohnanza.components;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 
 public class Player {
     final static int FIELD_0 = 0;
@@ -11,7 +16,7 @@ public class Player {
     private final TradingArea tradingArea = new TradingArea();
 
     //Getters
-    String getName() {
+    public String getName() {
         return name;
     }
 
@@ -30,13 +35,14 @@ public class Player {
         return hand.remove(position);
     }
 
-    void drawCard(GameBoard board) {
+    public Card drawCard(GameBoard board) {
         if (board.checkDeck()) {
             Card card = board.getDeck().pop();
-            card.setFace(Card.OPEN);
+            card.setFace(true);
             hand.add(card);
-            System.out.println("Drew card of type " + card.getBeanType());
+            return card;
         }
+        return null;
     }
 
     void discardCard(GameBoard board, Card card) {
@@ -48,7 +54,7 @@ public class Player {
             throw new IllegalArgumentException("Invalid field number, only FIELD_0 and FIELD_1 are allowed!");
         }
 
-        card.setFace(Card.OPEN);
+        card.setFace(true);
         if (field == FIELD_0) field0.add(card);
         if (field == FIELD_1) field1.add(card);
 
@@ -78,7 +84,7 @@ public class Player {
 
         //group cards by bean type
         for (Card card : treasury) {
-            map.compute(card.getBeanType(), (k, v) -> {
+            map.compute(card.getBeanType().toString(), (k, v) -> {
                 if (v == null) {
                     v = new ArrayList<>();
                 }
@@ -89,7 +95,7 @@ public class Player {
 
         //calculate coins for given bean type and add to total score
         for (ArrayList<Card> cards: map.values()) {
-            score += cards.getFirst().calculateCoins(cards.size());
+            score += cards.get(0).calculateCoins(cards.size());
         }
 
         return score;

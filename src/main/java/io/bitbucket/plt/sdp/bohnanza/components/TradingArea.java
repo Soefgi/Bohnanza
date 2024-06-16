@@ -1,3 +1,5 @@
+package io.bitbucket.plt.sdp.bohnanza.components;
+
 import java.util.ArrayList;
 import java.util.List;
 
